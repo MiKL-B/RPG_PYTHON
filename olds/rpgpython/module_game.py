@@ -591,3 +591,112 @@ class Game:
         if answer[module_text.ADVENTURE] == module_text.RETURN:
             self.display_tavern()
     # endregion
+
+
+# def display_menu_character(self):
+#         self.clear()
+#         self.player.refresh()
+#         print()
+
+#         choices_character = ["Inventory","Equipment","Return"]
+#         question_character = [inquirer.List("character", message="Choose an option", choices=choices_character)]
+#         answer_character = inquirer.prompt(question_character)
+
+#         match answer_character["character"]:
+#             case "Inventory":
+#                 self.display_menu_inventory()
+#             case "Equipment":
+#                 self.display_menu_equipment()
+#             case "Return":
+#                 self.game()
+    
+#     def display_menu_inventory(self):
+#         self.clear()
+#         print("Inventory:")
+#         self.player.refresh_inventory()
+#         print()
+#         choices_inventory = []
+#         for item in self.player.inventory:
+#             if isinstance(item, (module_item.Weapon)):
+#                 choices_inventory.append("Equip")
+#         choices_inventory.append("Return")
+#         question_inventory = [inquirer.List("inventory", message="Choose an option", choices=choices_inventory)]
+#         answer_inventory = inquirer.prompt(question_inventory)
+
+#         match answer_inventory["inventory"]:
+#             case "Equip":
+#                 self.display_menu_equipable()
+#             case "Return":
+#                 self.display_menu_character()
+
+#     def display_menu_equipable(self):
+#         self.clear()
+#         print("Items to equip:")
+#         self.player.refresh_equipable_items()
+#         print()
+
+#         choices_equipable = []
+#         for item in self.player.inventory:
+#             if isinstance(item, (module_item.Weapon)):
+#                 choices_equipable.append(item.name)
+#         choices_equipable.append("Return")
+
+#         question_equipable = [inquirer.List("equipable", message="Choose an option", choices=choices_equipable)]
+#         answer_equipable = inquirer.prompt(question_equipable)
+
+#         for item in self.player.inventory:
+#             if isinstance(item, (module_item.Weapon)):
+#                 if answer_equipable["equipable"] == item.name:
+#                     self.player.equip(item)
+#                     print("Item equipped!")
+#                     self.wait()
+#                     self.display_menu_equipable()
+
+#         if answer_equipable["equipable"] == "Return":
+#             self.display_menu_inventory()
+
+#     def display_menu_equipment(self):
+#         self.clear()
+#         if self.player.weapon is not None:
+#             print(self.player.weapon.name)
+#         else:
+#             print("No equipment!")
+#         print()
+#         choices_equipment = []
+#         if self.player.weapon is not None:
+#             choices_equipment.append("Unequip")
+#         choices_equipment.append("Return")
+#         question_equipment = [inquirer.List("equipment", message="Choose an option", choices=choices_equipment)]
+#         answer_equipment = inquirer.prompt(question_equipment)
+
+#         match answer_equipment["equipment"]:
+#             case "Unequip":
+#                 self.display_menu_unequipable()
+#             case "Return":
+#                 self.display_menu_character()
+    
+#     def display_menu_unequipable(self):
+#         self.clear()
+#         if self.player.weapon is not None:
+#             print(self.player.weapon.name)
+#         else:
+#             print("No item to unequip!")
+        
+#         print()
+#         choices_unequipable = []
+#         if self.player.weapon is not None:
+#             choices_unequipable.append(self.player.weapon.name)
+#         choices_unequipable.append("Return")
+
+#         question_unequipable = [inquirer.List("unequipable", message="Choose an option", choices=choices_unequipable)]
+#         answer_unequipable = inquirer.prompt(question_unequipable)
+
+#         match answer_unequipable["unequipable"]:
+#             case self.player.weapon.name:
+#                     self.player.unequip(self.player.weapon)
+#                     print("Item unequipped!")
+#                     self.wait()
+#                     self.display_menu_unequipable()
+#             case "Return":
+#                 self.display_menu_equipment()
+    # endregion

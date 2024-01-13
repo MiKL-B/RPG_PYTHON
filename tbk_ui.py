@@ -1,9 +1,7 @@
 """function to interact with the terminal"""
 import os
 import time
-
 from sys import platform
-
 
 YELLOW = '\033[1;33m'
 GREEN = '\033[1;32m'
@@ -26,7 +24,6 @@ def clear():
 def wait():
     """wait a time to display some text"""
     time.sleep(2)
-
 
 
 def print_msg(field,value="",color=""):

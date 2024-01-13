@@ -1,12 +1,19 @@
 GAME_TITLE = "The barrel kingdom"
+
 NEW = "New"
 LOAD = "Load"
 DELETE = "Delete"
+SAVE ="Save"
 QUIT = "Quit"
+
+CONTINUE  ="Continue"
+RETURN = "Return"
+
 DATA_DELETED = "Data well deleted!"
 DATA_LOADED = "Data well loaded!"
-STORY ="""
-Dans un village de nains perché sur une montagne se trouvait un tonneau d'abondance qui assurait vie, prospérité et pérennité pour tout les habitants.
+DATA_SAVED = "Data well saved!"
+
+STORY ="""Dans un village de nains perché sur une montagne se trouvait un tonneau d'abondance qui assurait vie, prospérité et pérennité pour tout les habitants.
 Chaque année, à l'occasion de la fête de la bière, le tonneau était sorti pour
 faire le tour de tout les villages nains des environs.
 
@@ -19,3 +26,15 @@ plongea le récupérer.
 Alors que vous vous reveillez dans votre humble maison et ayant mal au cheveux,
 vous êtes le héros le plus volontaire et devez partir à l'aventure afin de récupérer les morceaux du tonneau ainsi que le coeur.
 """
+CHARACTER ="Character"
+
+NORTH = "North"
+WEST ="West"
+EAST = "East"
+SOUTH ="South"
+IMPOSSIBLE_DIRECTION = "You can not go here!"
+
+WARRIOR = "Warrior"
+WIZARD = "Wizard"
+ROGUE = "Rogue"
+
