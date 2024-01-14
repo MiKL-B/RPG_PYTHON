@@ -19,6 +19,7 @@ class Consumable(Item):
         Item.__init__(self,name,purchase_price,sale_price)
         self.effect = effect
 
+
 class Equipment(Item):
     def __init__(self,name,purchase_price,sale_price,job_category_id):
         Item.__init__(self,name,purchase_price,sale_price)
@@ -35,10 +36,34 @@ class Armor(Equipment):
         self.defense = defense
 
 
-potion = Consumable("Potion",50,25,"restore 50 HP")
 
+potion = Consumable("Potion",50,25,150)
 sword = Weapon("Sword",50,25,tbk_job.TYPE_FIGHT,10)
 bow = Weapon("Bow",50,25,tbk_job.TYPE_RANGE,10)
 shield = Armor("Shield",50,25,tbk_job.TYPE_FIGHT,5)
 
 shop = Shop([potion,sword,bow],1,0)
+
+
+class P:
+    def __init__(self,health,max_health):
+        self.health = health
+        self.max_health = max_health
+
+    def heal(self,value):
+        if self.health + value > self.max_health:
+            self.health = self.max_health
+        else:
+            self.health += value
+    
+    # def damage(self,value):
+
+
+
+
+player = P(50,100)
+
+print(player.__dict__)
+player.heal(potion.effect)
+print("heal done")
+print(player.__dict__)
