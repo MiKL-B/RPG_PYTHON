@@ -1,8 +1,9 @@
 import inquirer
-import tbk_ui
-import tbk_text
+import tbk_ui as tbk_ui
+import tbk_text as tbk_text
+from tbk_singleton import Singleton
 
-class Player:
+class Player(metaclass=Singleton):
     def __init__(self,name="",job = None,loc_x=0, loc_y=0):
         self.name = name
         self.job = job

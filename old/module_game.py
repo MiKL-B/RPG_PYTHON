@@ -5,11 +5,11 @@ import pickle
 import inquirer
 import module_text
 import module_ui
-import module_hero
-import module_job
-import module_item
-import module_player
-import module_map
+import character.module_hero as module_hero
+import character.module_job as module_job
+import shop.module_item as module_item
+import character.module_player as module_player
+import location.module_map as module_map
 
 class Game:
     """main class"""

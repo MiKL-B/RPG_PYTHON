@@ -1,4 +1,4 @@
-import module_location
+import location.module_location as module_location
 
 
 class WorldMap:

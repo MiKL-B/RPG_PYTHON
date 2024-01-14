@@ -1,5 +1,5 @@
 """module player"""
-from module_singleton import Singleton
+from tbk_singleton import Singleton
 import module_ui
 import module_text
 from module_location import locations

@@ -1,3 +1,41 @@
+# todo 
+character (player,hero,pnj,monster)
+player(job,quests,inventory...)
+location(map,position...)
+game(...)
+translation
+
+# progress
+item(shop,inventory...)
+
+# finished
+data
+singleton
+ui
+menu
+debug
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 
+
 # todo
 
 - metier
@@ -63,7 +101,7 @@ affichage monster
 affichage heroes
 actions en dessous
 action du hero si son tour
-fuite
+fuite 
 
 faire systeme de tour par tour
 vitesse si ennemi initiative, ordre des tours et fuite
@@ -87,4 +125,4 @@ resource bar for character class
 town
 shop
 tavern
-maitre de classe enac: etrange nain a capuche
+maitre de classe enac: etrange nain a capuche-->

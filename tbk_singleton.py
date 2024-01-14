@@ -1,10 +1,6 @@
-"""
-singleton
-"""
+"""tbk_singleton"""
 class Singleton(type):
-    """
-    design pattern SINGLETON : ensure that only one instance of hero exist
-    """
+    """design pattern SINGLETON : ensure that only one instance of hero exist"""
     _instances = {}
 
     def __call__(cls, *args, **kwargs):

@@ -1,6 +1,6 @@
 """class Hero"""
 import module_ui
-from module_character import Character
+from character.module_character import Character
 
 
 class Hero(Character):

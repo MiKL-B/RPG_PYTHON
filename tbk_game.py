@@ -1,11 +1,12 @@
 import sys
 
-import tbk_menu
-import tbk_ui
-import tbk_text
+import tbk_menu as tbk_menu
+import tbk_ui as tbk_ui
+import tbk_text as tbk_text
 import tbk_data
-import tbk_player
-import tbk_job
+import tbk_player as tbk_player
+import tbk_job as tbk_job
+import tbk_item
 
 class Game:
     def __init__(self):
