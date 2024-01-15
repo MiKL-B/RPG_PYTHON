@@ -15,10 +15,11 @@ class Item:
         self.sale_price = sale_price
 
 class Consumable(Item):
-    def __init__(self,name,purchase_price,sale_price,category,value):
+    def __init__(self,name,purchase_price,sale_price,category,value,quantity):
         Item.__init__(self,name,purchase_price,sale_price)
         self.category = category
         self.value = value
+        self.quantity = quantity
 
 class Equipment(Item):
     def __init__(self,name,purchase_price,sale_price,job_category_id):
@@ -85,8 +86,11 @@ class P:
             print(f"You don't have {item.name} in your inventory")
             return
         
-        self.inventory.remove(item)
+        item.quantity -= 1
         print(f"{item.name} removed from inventory!")
+        
+        if item.quantity == 0:
+            self.inventory.remove(item)
 
 
     def pickup_item(self,item):
@@ -94,17 +98,18 @@ class P:
             print("Your inventory is full!")
             return
         
-        new_item = {
-            "name":item.name,
-            "quantity":1
-        } 
-     
-        if new_item not in self.inventory:
-            self.inventory.append(new_item)
-        else:
-            new_item["quantity"] +=1
-        # print(f"{new_item['name']} added in your inventory!")
+        if item not in self.inventory:
+            self.inventory.append(item)
+            return
+        
+        item.quantity += 1
+        
+        
 
+    def refresh(self):
+        for item in self.inventory:
+            print(f"{item.name} qty: {item.quantity}")
+        
 
 
 def heal(self,value):
@@ -119,17 +124,15 @@ def cure(self,value):
 
 
 
-potion = Consumable("Potion",50,25,"heal",25)
-beer = Consumable("Beer",50,25,"heal",100)
+potion = Consumable("Potion",50,25,"heal",25,1)
+beer = Consumable("Beer",50,25,"heal",100,1)
 # antidote = Consumable("Antidote",50,25,"cure",0)
-
 
 player = P(50,100,1)
 
-
 player.pickup_item(potion)
 player.pickup_item(potion)
-player.pickup_item(potion)
-
 player.pickup_item(beer)
-print(player.inventory)
+
+player.refresh()
+
