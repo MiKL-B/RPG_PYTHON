@@ -15,10 +15,10 @@ class Item:
         self.sale_price = sale_price
 
 class Consumable(Item):
-    def __init__(self,name,purchase_price,sale_price,effect):
+    def __init__(self,name,purchase_price,sale_price,category,value):
         Item.__init__(self,name,purchase_price,sale_price)
-        self.effect = effect
-
+        self.category = category
+        self.value = value
 
 class Equipment(Item):
     def __init__(self,name,purchase_price,sale_price,job_category_id):
@@ -37,33 +37,99 @@ class Armor(Equipment):
 
 
 
-potion = Consumable("Potion",50,25,150)
-sword = Weapon("Sword",50,25,tbk_job.TYPE_FIGHT,10)
-bow = Weapon("Bow",50,25,tbk_job.TYPE_RANGE,10)
-shield = Armor("Shield",50,25,tbk_job.TYPE_FIGHT,5)
+# sword = Weapon("Sword",50,25,tbk_job.TYPE_FIGHT,10)
+# bow = Weapon("Bow",50,25,tbk_job.TYPE_RANGE,10)
+# shield = Armor("Shield",50,25,tbk_job.TYPE_FIGHT,5)
+# shield = Armor("Shield",50,25,tbk_job.TYPE_FIGHT,5)
+# shop = Shop([potion,sword,bow],1,0)
 
-shop = Shop([potion,sword,bow],1,0)
+
 
 
 class P:
-    def __init__(self,health,max_health):
+    def __init__(self,health,max_health,state,inventory=None):
         self.health = health
         self.max_health = max_health
+        self.state = state
+        if inventory == None:
+            inventory = []
+        self.inventory = inventory
 
-    def heal(self,value):
-        if self.health + value > self.max_health:
-            self.health = self.max_health
-        else:
-            self.health += value
+        
+    def use_item(self,item):
+        if item not in self.inventory:
+            print(f"You don't have {item.name} in your inventory")
+            return
+        
+        if not isinstance(item,Consumable): 
+            print(f"{item.name} is not a consumable!")
+            return
+        
+        match item.category:
+            case "heal":
+                heal(self,item.value)
+                print(f"Heal done: {item.value}")
+            case "cure":
+                cure(self,item.value)
+                print(f"Cure done!")
+
+        self.remove_item(item)
     
-    # def damage(self,value):
+
+    def remove_item(self,item):
+        if len(self.inventory) == 0:
+            print("Nothing to remove, your inventory is empty!")
+            return
+
+        if item not in self.inventory:
+            print(f"You don't have {item.name} in your inventory")
+            return
+        
+        self.inventory.remove(item)
+        print(f"{item.name} removed from inventory!")
+
+
+    def pickup_item(self,item):
+        if len(self.inventory) == 10:
+            print("Your inventory is full!")
+            return
+        
+        new_item = {
+            "name":item.name,
+            "quantity":1
+        } 
+     
+        if new_item not in self.inventory:
+            self.inventory.append(new_item)
+        else:
+            new_item["quantity"] +=1
+        # print(f"{new_item['name']} added in your inventory!")
 
 
 
+def heal(self,value):
+    if self.health + value > self.max_health:
+        self.health = self.max_health
+    else:
+        self.health += value
 
-player = P(50,100)
+def cure(self,value):
+    if self.state != value:
+        self.state = value
 
-print(player.__dict__)
-player.heal(potion.effect)
-print("heal done")
-print(player.__dict__)
+
+
+potion = Consumable("Potion",50,25,"heal",25)
+beer = Consumable("Beer",50,25,"heal",100)
+# antidote = Consumable("Antidote",50,25,"cure",0)
+
+
+player = P(50,100,1)
+
+
+player.pickup_item(potion)
+player.pickup_item(potion)
+player.pickup_item(potion)
+
+player.pickup_item(beer)
+print(player.inventory)
