@@ -36,6 +36,12 @@ class Armor(Equipment):
         Equipment.__init__(self,name,purchase_price,sale_price,quantity,job_category_id)
         self.defense = defense
 
+class Jewel(Equipment):
+    def __init__(self,name,purchase_price,sale_price,quantity,job_category_id,defense):
+        Equipment.__init__(self,name,purchase_price,sale_price,quantity,job_category_id)
+        self.defense = defense
+    
+
 
 
 
@@ -46,13 +52,10 @@ class Armor(Equipment):
 
 
 class P:
-    def __init__(self,health,max_health,state,weapon=None,equipment=None,inventory=None):
+    def __init__(self,health,max_health,state,equipment=None,inventory=None):
         self.health = health
         self.max_health = max_health
         self.state = state
-        if weapon == None:
-            weapon = ""
-        self.weapon = weapon
         if equipment == None:
             equipment =  []
         self.equipment = equipment
@@ -62,14 +65,17 @@ class P:
 
         
     def use_item(self,item):
+        # can't use a consumable which is not in the inventory
         if item not in self.inventory:
             print(f"You don't have {item.name} in your inventory")
             return
         
+        # can't use an item which is not a consumable
         if not isinstance(item,Consumable): 
             print(f"{item.name} is not a consumable!")
             return
         
+        # process to use an item according to his category
         match item.category:
             case "heal":
                 heal(self,item.value)
@@ -81,51 +87,64 @@ class P:
         self.remove_item(item)
     
     def equip_item(self,item):
+        # check if already have a weapon or armor or jewel 
+        for it in self.equipment:
+            if type(it) == type(item):
+                print(f"you already have equipped a {type(it)}")
+                return
+        
+        # can't equip more than three items
+        if len(self.equipment) == 3:
+            print("equipment full!")
+            return
+
+        # can't equip an item which is not in the inventory
         if item not in self.inventory:
             print(f"You don't have {item.name} in your inventory")
             return
         
-        if not isinstance(item,(Weapon,Armor)):
+        # check if the item is an equipment
+        if not isinstance(item,(Weapon,Armor,Jewel)):
             print(f"{item.name} is not an equipment!")
             return
-
-        if isinstance(item,Weapon):
-            self.weapon = item
-            self.remove_item(item)
-            return
         
-        if isinstance(item, Armor):
-            self.equipment.append(item)
-            self.remove_item(item)
-            return
+        # process to equip
+        self.equipment.append(item)
+        self.remove_item(item)
+        item.quantity = 1
+        print(f"{item.name} well equipped!")
     
+
     def unequip_item(self,item):
-        # if len(equipment) == 0:
-        #   nothing to unequip
-        #   return
-
-        # if self.weapon == "":
-        #   nothing to unequip:
-        #   return
+        # can't unequip if the equipment is empty
+        if len(self.equipment) == 0:
+            print("Nothing to unequip")
+            return
         
-        # if isinstance(item,Armor):
-        #   self.equipment.remove(item)
-        #   self.inventory.append(item) or pickup item ? test
-
-        # if isinstance(item,Weapon):
-        #   self.weapon = ""
-        #   self.inventory.append(item) or pickup item ? test
-        pass
+        # can't unequip an item which is not equipped
+        if item not in self.equipment:
+            print(f"You don't have {item.name} in your equipment")
+            return
+        
+        # process to unequip
+        self.equipment.remove(item)
+        self.inventory.append(item)
+        item.quantity = 1
+        print(f"{item.name} well unequipped!")
+        
 
     def remove_item(self,item):
+        # can't remove it the inventory is empty
         if len(self.inventory) == 0:
             print("Nothing to remove, your inventory is empty!")
             return
-
+        
+        # can't remove an item which is not in the inventory
         if item not in self.inventory:
             print(f"You don't have {item.name} in your inventory")
             return
         
+        # process to remove
         item.quantity -= 1
         print(f"{item.name} removed from inventory!")
         
@@ -134,40 +153,46 @@ class P:
 
 
     def pickup_item(self,item):
+        # can't pickup an item if the inventory is full
         if len(self.inventory) == 10:
             print("Your inventory is full!")
             return
         
-        # for quantity
+        # check single item for equipment
+        if item in self.inventory and isinstance(item,(Weapon,Armor,Jewel)):
+            print(f"You already have {item.name} in your inventory!")
+            return
+        
+        # process to pick up the item
         if item not in self.inventory:
             self.inventory.append(item)
+            print(f"{item.name} added to your inventory!")
             return
-        
-        # check single item
-        if item in self.inventory and isinstance(item,(Weapon,Armor)):
-            print(f"You already have {item.name}!")
-            return
-        
+         
+        # update the quantity if the item is in the inventory
         item.quantity += 1
-        
         
 
     def refresh_inventory(self):
         print("Inventory:")
         for item in self.inventory:
-            print(item.__dict__)
+            # print(item.__dict__)
+            print(f"{item.name}: {type(item)}")
         print()
     
+
     def refresh_weapon(self):
         print("Weapon:")
         if self.weapon != "":
             print(self.weapon.name)
         print()
 
+
     def refresh_equipment(self):
         print("Equipment:")
         for item in self.equipment:
-            print(item.__dict__)
+            # print(item.__dict__)
+            print(f"{item.name}: {type(item)}")
         print()
 
 
@@ -188,14 +213,12 @@ shield = Armor("Shield",50,25,1,tbk_job.TYPE_FIGHT,5)
 potion = Consumable("Potion",50,25,1,"heal",25)
 beer = Consumable("Beer",50,25,1,"heal",100)
 antidote = Consumable("Antidote",50,25,1,"cure",0)
+ring = Jewel("Ring",50,25,1,tbk_job.TYPE_FIGHT,5)
 
 player = P(50,100,1)
 
+
+
 player.pickup_item(potion)
 player.pickup_item(sword)
-player.pickup_item(beer)
-
-player.equip_item(beer)
-player.refresh_inventory()
-player.refresh_weapon()
-player.refresh_equipment()
+player.pickup_item(sword)
