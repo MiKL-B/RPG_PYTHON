@@ -6,7 +6,9 @@ game(...)
 translation
 
 # progress
-item(shop,inventory...)
+item(shop,inventory...) --> check "missing" stuff
+create more items
+move effects to tbk_effect.py file
 
 # finished
 data

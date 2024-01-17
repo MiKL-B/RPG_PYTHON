@@ -181,13 +181,6 @@ class P:
         print()
     
 
-    def refresh_weapon(self):
-        print("Weapon:")
-        if self.weapon != "":
-            print(self.weapon.name)
-        print()
-
-
     def refresh_equipment(self):
         print("Equipment:")
         for item in self.equipment:
@@ -195,7 +188,7 @@ class P:
             print(f"{item.name}: {type(item)}")
         print()
 
-
+# effects of items move to tbk_effect.py file
 def heal(self,value):
     if self.health + value > self.max_health:
         self.health = self.max_health
