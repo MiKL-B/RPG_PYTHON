@@ -6,7 +6,7 @@ import tbk_text as tbk_text
 import tbk_data
 import tbk_player as tbk_player
 import tbk_job as tbk_job
-import tbk_item
+
 
 class Game:
     def __init__(self):
@@ -114,6 +114,7 @@ class Game:
     def print_menu_player(self):
         tbk_ui.clear()
         self.player.print_info()
+        self.player.print_gold()
         list_choices = [tbk_text.RETURN]
         menu_player = tbk_menu.Menu("player",tbk_menu.TYPE_LIST,list_choices)
         match menu_player.answer[menu_player.name]:

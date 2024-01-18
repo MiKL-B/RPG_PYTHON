@@ -1,14 +1,12 @@
 # todo 
 character (player,hero,pnj,monster)
-player(job,quests,inventory...)
 location(map,position...)
 game(...)
 translation
+shop
 
 # progress
-item(shop,inventory...) --> check "missing" stuff
-create more items
-move effects to tbk_effect.py file
+player(job,quests,inventory...)
 
 # finished
 data
@@ -16,7 +14,7 @@ singleton
 ui
 menu
 debug
-
+item
 
 
 
