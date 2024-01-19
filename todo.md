@@ -6,6 +6,8 @@ translation
 shop
 
 # progress
+create items
+compare items
 player(job,quests,inventory...)
 
 # finished
