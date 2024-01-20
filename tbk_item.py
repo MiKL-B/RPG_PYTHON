@@ -1,7 +1,4 @@
-import tbk_ui
-from tabulate import tabulate
 import tbk_job
-
 
 class Shop:
     def __init__(self, items=None, loc_x=0, loc_y=0):
@@ -104,27 +101,4 @@ def create_item() -> str:
         file.write(text)
 
 
-def compare_item(item1, item2):
-    headers = ["Fields", item1.name, item2.name]
-    table = []
 
-    if isinstance(item1, Weapon) and isinstance(item2, Weapon):
-        table.append(["Attack", item1.attack, compare(item1.attack,item2.attack)])
-        print(tabulate(table, headers, tablefmt="pretty"))
-    elif isinstance(item1, (Armor, Jewel)) and isinstance(item2, (Armor, Jewel)):
-        table.append(["Defense", item1.defense,compare(item1.defense, item2.defense)])
-        print(tabulate(table, headers, tablefmt="pretty"))
-    else:
-        print("No comparison!")
-
-
-def compare(value1, value2):
-    text = value2
-    if value1 < value2:
-        text = tbk_ui.GREEN + str(text) + tbk_ui.END
-    elif value1 > value2:
-        text = tbk_ui.RED + str(text) + tbk_ui.END
-    return text
-
-
-compare_item(ring, ring)

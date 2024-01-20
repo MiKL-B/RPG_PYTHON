@@ -1,4 +1,5 @@
 import inquirer
+from tabulate import tabulate
 from tbk_singleton import Singleton
 import tbk_ui
 import tbk_text 
@@ -266,4 +267,47 @@ class Player(metaclass=Singleton):
 
         self.gold += item.sale_price
         print(f"You have sold {item.name} for {item.sale_price} gold!")
+    
+    def compare_item(self,item1, item2):
+        headers = ["Fields", item1.name, item2.name]
+        table = []
+
+        if isinstance(item1, tbk_item.Weapon) and isinstance(item2, tbk_item.Weapon):
+            table.append(["Attack", item1.attack, self.compare(item1.attack,item2.attack)])
+            print(tabulate(table, headers, tablefmt="pretty"))
+        elif isinstance(item1, (tbk_item.Armor, tbk_item.Jewel)) and isinstance(item2, (tbk_item.Armor, tbk_item.Jewel)):
+            table.append(["Defense", item1.defense,self.compare(item1.defense, item2.defense)])
+            print(tabulate(table, headers, tablefmt="pretty"))
+        else:
+            print("No comparison!")
+
+    def compare(self,value1, value2):
+        text = value2
+        if value1 < value2:
+            text = tbk_ui.GREEN + str(text) + tbk_ui.END
+        elif value1 > value2:
+            text = tbk_ui.RED + str(text) + tbk_ui.END
+        return text
     # endregion
+
+    # region gold
+    def increase_gold(self,value):
+        max_gold = 999_999
+        self.gold += value
+        if self.gold >= max_gold:
+            self.gold = max_gold
+            print(f"You have reached the maximum amount of gold!")
+
+    def decrease_gold(self,value):
+        min_gold = 0
+        self.gold -= value
+        if self.gold <= min_gold:
+            self.gold = min_gold
+    # endregion
+
+
+# p = Player()
+# p.gold = 999_998
+# p.decrease_gold(999_999)
+
+# p.print_gold()
