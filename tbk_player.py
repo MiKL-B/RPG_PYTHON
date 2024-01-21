@@ -8,13 +8,25 @@ import tbk_effect
 import tbk_level
 
 class Player(metaclass=Singleton):
-    def __init__(self,name="",job = None,loc_x=0, loc_y=0,health=100,max_health=100,state=0,equipment=None,inventory=None,gold=0,level=1,experience=0):
+    def __init__(self,name="",job=None,loc_x=0, loc_y=0,health=100,max_health=100,
+                 state=0,equipment=None,inventory=None,gold=0,level=1,experience=0,
+                 world_map_x=0,world_map_y=0):
         # player
+        self.name = name
+        self.job = job
+        self.health = health
+        self.max_health = max_health
+        self.state = state
+        if equipment == None:
+            equipment =  []
+        self.equipment = equipment
+        self.level = level
+        self.experience = experience
         # if heroes is None:
         #     heroes = []
         # self.heroes = heroes
-        # self.world_map_x = world_map_x
-        # self.world_map_y = world_map_y
+        self.world_map_x = world_map_x
+        self.world_map_y = world_map_y
         self.loc_x = loc_x
         self.loc_y = loc_y
         if inventory == None:
@@ -26,65 +38,102 @@ class Player(metaclass=Singleton):
         #     quests = []
         # self.quests = quests
         
-        # heroes
-        self.name = name
-        self.job = job
-        self.health = health
-        self.max_health = max_health
-        self.state = state
-        if equipment == None:
-            equipment =  []
-        self.equipment = equipment
-        self.level = level
-        self.experience = experience
-        
 
-
-    # region refresh
     # def refresh(self):
     #     """refresh info player + heroes of player"""
     #     for hero in self.heroes:
     #         print(f"Name: {hero.name} Class: {hero.job}")
     #     print(f"Gold: {module_ui.color(self.get_gold(),'yellow')}")
-
+        
+    # region refresh
     def print_info(self):
         tbk_ui.print_msg("Name",self.name,"green")
         tbk_ui.print_msg("Job",self.job.name,"green")
-        tbk_ui.print_msg("Level",self.level,"green")
+        tbk_ui.print_msg("Level",str(self.level),"green")
         self.print_experience()
         tbk_ui.print_msg("Health",str(self.health) + " / " + str(self.max_health), "green")
-
-    def print_gold(self):
-        tbk_ui.print_msg("Gold",self.gold, "yellow")
-    
-    def print_inventory(self):
-        if len(self.inventory) > 0:
-            for item in self.inventory:
-                tbk_ui.print_msg("Item",item.name,"green")
-        else:
-            print("Inventory empty!")
-
+    # endregion
+        
     def print_equipment(self):
-        # for heroes
         if len(self.equipment) > 0:
             for item in self.equipment:
                 tbk_ui.print_msg("Item",item.name,"green")
         else:
             print("Equipment empty!")
-
-    def print_position(self):
-        tbk_ui.print_msg("X",self.loc_x,"green")
-        tbk_ui.print_msg("Y",self.loc_y,"green")
-
+    
     def print_experience(self):
-        # for heroes
         max_experience = tbk_level.levels[self.level-1]['max_experience']
         tbk_ui.print_msg("Exp", str(self.experience) + " / " + str(max_experience),"green")
-    # endregion
+    
+    def print_gold(self):
+        tbk_ui.print_msg("Gold",str(self.gold), "yellow")
+    
+    def print_inventory(self):
+        if len(self.inventory) > 0:
+            for item in self.inventory:
+                tbk_ui.print_msg("Item",item.name + " x"+str(item.quantity),"green")
+        else:
+            print("Inventory empty!")
 
+    def print_consumable(self):
+        for item in self.inventory:
+            if isinstance(item,tbk_item.Consumable): 
+                print(f"{item.name}")
+
+    def print_equipable(self):
+        for item in self.inventory:
+            if isinstance(item, (tbk_item.Armor, tbk_item.Weapon)):
+                print(f"{item.name}")
+    
+    def print_position(self):
+        tbk_ui.print_msg("world X",str(self.world_map_x),"green")
+        tbk_ui.print_msg("world Y",str(self.world_map_y),"green")
+        tbk_ui.print_msg("local X",str(self.loc_x),"green")
+        tbk_ui.print_msg("local Y",str(self.loc_y),"green")
+    
+    # def refresh_position(self):
+    #     """refresh position"""
+    #     location_name = module_text.UNKNOWN
+    #     for item in locations:
+    #         if item.x == self.location_x and item.y == self.location_y:
+    #             location_name = item.name
+    #     print(f"Local:{location_name}")
+    #     print(f"X:{self.location_x} Y:{self.location_y}")
+
+    # def is_in_town(self) -> bool:
+    #     """return if the player is in town for access to shop..."""
+    #     in_town = False
+    #     for item in locations:
+    #         if item.x == self.location_x and item.y == self.location_y and item.shop:
+    #             in_town = True
+    #     return in_town
+    # endregion
+    
+    # region getters
+    def get_list_consumable(self):
+        list_items = []
+        for item in self.inventory:
+            if isinstance(item,tbk_item.Consumable): 
+                list_items.append(item)
+        return list_items
+
+    def get_list_equipable(self):
+        list_items = []
+        for item in self.inventory:
+            if isinstance(item,(tbk_item.Armor,tbk_item.Weapon)):
+                list_items.append(item)
+        return list_items
+    
+    def get_list_equipment(self):
+        list_items = []
+        for item in self.equipment:
+            list_items.append(item)
+        return list_items
+    
+    # endregion
+        
     # region setters
     def set_name(self, question_name, answer_name):
-        # for heroes
         max_length_name = 10
         while True:
             length_name = len(answer_name["name"])
@@ -97,16 +146,40 @@ class Player(metaclass=Singleton):
             answer_name["name"] = "Hero"
 
         self.name = answer_name["name"]
-    
+
     def set_job(self,value):
-        # for heroes
         self.job = value
     # endregion
-        
+           
     # region move
     def move(self,x,y):
         self.loc_x += x
         self.loc_y += y
+         # change south
+        if self.loc_x == 5 and self.loc_y == 10:
+            self.change_zone(0, 1)
+            self.loc_x = 5
+            self.loc_y = 1
+        # change north
+        elif self.loc_x == 5 and self.loc_y == 0:
+            self.change_zone(0, -1)
+            self.loc_x = 5
+            self.loc_y = 9
+        # change east
+        elif self.loc_x == 10 and self.loc_y == 5:
+            self.change_zone(1, 0)
+            self.loc_x = 1
+            self.loc_y = 5
+        # change west
+        elif self.loc_x == 0 and self.loc_y == 5:
+            self.change_zone(-1, 0)
+            self.loc_x = 9
+            self.loc_y = 5
+      
+    def change_zone(self, x, y):
+        """change_zone"""
+        self.world_map_x += x
+        self.world_map_y += y
 
     def move_north(self):
         """move north"""
@@ -140,17 +213,19 @@ class Player(metaclass=Singleton):
             tbk_ui.print_msg(tbk_text.IMPOSSIBLE_DIRECTION,"","red")
             tbk_ui.wait()
     # endregion
-
+            
     # region item
     def use_item(self,item):
         # can't use a consumable which is not in the inventory
         if item not in self.inventory:
             print(f"You don't have {item.name} in your inventory")
+            tbk_ui.wait()
             return
         
         # can't use an item which is not a consumable
         if not isinstance(item,tbk_item.Consumable): 
             print(f"{item.name} is not a consumable!")
+            tbk_ui.wait()
             return
         
         # process to use an item according to his category
@@ -169,21 +244,25 @@ class Player(metaclass=Singleton):
         for it in self.equipment:
             if type(it) == type(item):
                 print(f"you already have equipped a {type(it)}")
+                tbk_ui.wait()
                 return
         
         # can't equip more than three items
         if len(self.equipment) == 3:
             print("equipment full!")
+            tbk_ui.wait()
             return
 
         # can't equip an item which is not in the inventory
         if item not in self.inventory:
             print(f"You don't have {item.name} in your inventory")
+            tbk_ui.wait()
             return
         
         # check if the item is an equipment
         if not isinstance(item,(tbk_item.Weapon,tbk_item.Armor,tbk_item.Jewel)):
             print(f"{item.name} is not an equipment!")
+            tbk_ui.wait()
             return
         
         # process to equip
@@ -191,16 +270,19 @@ class Player(metaclass=Singleton):
         self.remove_item(item)
         item.quantity = 1
         print(f"{item.name} well equipped!")
+        tbk_ui.wait()
     
     def unequip_item(self,item):
         # can't unequip if the equipment is empty
         if len(self.equipment) == 0:
             print("Nothing to unequip")
+            tbk_ui.wait()
             return
         
         # can't unequip an item which is not equipped
         if item not in self.equipment:
             print(f"You don't have {item.name} in your equipment")
+            tbk_ui.wait()
             return
         
         # process to unequip
@@ -208,21 +290,25 @@ class Player(metaclass=Singleton):
         self.inventory.append(item)
         item.quantity = 1
         print(f"{item.name} well unequipped!")
+        tbk_ui.wait()
         
     def remove_item(self,item):
         # can't remove it the inventory is empty
         if len(self.inventory) == 0:
             print("Nothing to remove, your inventory is empty!")
+            tbk_ui.wait()
             return
         
         # can't remove an item which is not in the inventory
         if item not in self.inventory:
             print(f"You don't have {item.name} in your inventory")
+            tbk_ui.wait()
             return
         
         # process to remove
         item.quantity -= 1
         print(f"{item.name} removed from inventory!")
+        tbk_ui.wait()
         
         if item.quantity == 0:
             self.inventory.remove(item)

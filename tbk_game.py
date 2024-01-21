@@ -6,7 +6,7 @@ import tbk_text as tbk_text
 import tbk_data
 import tbk_player as tbk_player
 import tbk_job as tbk_job
-
+import tbk_item
 
 class Game:
     def __init__(self):
@@ -80,6 +80,9 @@ class Game:
             case tbk_job.rogue.name:
                 job = tbk_job.rogue
         self.player.set_job(job)
+        self.player.pickup_item(tbk_item.potion)
+        self.player.pickup_item(tbk_item.potion)
+        self.player.pickup_item(tbk_item.sword)
 
     def print_introduction(self):
         tbk_ui.clear()
@@ -92,7 +95,18 @@ class Game:
         tbk_ui.clear()
         self.player.print_position()
         print()
-        list_choices = [tbk_text.NORTH, tbk_text.WEST, tbk_text.EAST,tbk_text.SOUTH,tbk_text.CHARACTER,tbk_text.SAVE,tbk_text.QUIT]
+        list_choices = [tbk_text.NORTH,
+                        tbk_text.WEST,
+                        tbk_text.EAST,
+                        tbk_text.SOUTH,
+                        tbk_text.WORLD_MAP]
+        
+        # if is in town
+        #   list_choices.append(tbk_text.TOWN)
+        list_choices.append(tbk_text.CHARACTER)
+        list_choices.append(tbk_text.SAVE)
+        list_choices.append(tbk_text.QUIT)               
+                        
         menu_game = tbk_menu.Menu("game", tbk_menu.TYPE_LIST, list_choices)
         match menu_game.answer[menu_game.name]:
             case tbk_text.NORTH:
@@ -103,21 +117,172 @@ class Game:
                 self.player.move_east()
             case tbk_text.SOUTH:
                 self.player.move_south()
+            case tbk_text.WORLD_MAP:
+                self.print_menu_world_map()
             case tbk_text.CHARACTER:
                 self.print_menu_player()
+            case tbk_text.TOWN:
+                self.print_menu_town()
             case tbk_text.SAVE:
                 self.save()
             case tbk_text.QUIT:
                 self.quit()
         self.game()
     
+    # region print menu game
+    def print_menu_world_map(self):
+        pass
+
     def print_menu_player(self):
         tbk_ui.clear()
+        tbk_ui.print_title(tbk_text.CHARACTER)
         self.player.print_info()
         self.player.print_gold()
-        list_choices = [tbk_text.RETURN]
+        print()
+        list_choices = [tbk_text.INVENTORY,
+                        tbk_text.EQUIPMENT,
+                        tbk_text.QUESTS,
+                        tbk_text.SKILLS,
+                        tbk_text.BLACKSMITHING,
+                        tbk_text.BESTIARY,
+                        tbk_text.FISHING_DIARY,
+                        tbk_text.RETURN]
         menu_player = tbk_menu.Menu("player",tbk_menu.TYPE_LIST,list_choices)
         match menu_player.answer[menu_player.name]:
+            case tbk_text.QUESTS:
+                self.print_menu_quests()
+            case tbk_text.EQUIPMENT:
+                self.print_menu_equipment()
+            case tbk_text.INVENTORY:
+                self.print_menu_inventory()
+            case tbk_text.SKILLS:
+                self.print_menu_skills()
+            case tbk_text.BESTIARY:
+                self.print_menu_bestiary()
+            case tbk_text.FISHING_DIARY:
+                self.print_menu_fishing_diary()
+            case tbk_text.BLACKSMITHING:
+                self.print_menu_blacksmithing()
             case tbk_text.RETURN:
                 self.game()
 
+    def print_menu_town(self):
+        pass
+    
+    def print_menu_quests(self):
+        pass
+
+    def print_menu_equipment(self):
+        tbk_ui.clear()
+        tbk_ui.print_title(tbk_text.EQUIPMENT)
+        self.player.print_equipment()
+        print()
+        list_choices = []
+        if len(self.player.get_list_equipment()) > 0:
+            list_choices.append(tbk_text.UNEQUIP_ITEM)
+        list_choices.append(tbk_text.RETURN)
+        menu_player = tbk_menu.Menu("player",tbk_menu.TYPE_LIST,list_choices)
+        match menu_player.answer[menu_player.name]:
+            case tbk_text.UNEQUIP_ITEM:
+                self.print_menu_unequip_item()
+            case tbk_text.RETURN:
+                self.print_menu_player()
+    
+    def print_menu_unequip_item(self):
+        tbk_ui.clear()
+        self.player.print_equipment()
+        print()
+
+        list_choices = []
+        for item in self.player.get_list_equipment():
+            list_choices.append(item.name) 
+        list_choices.append(tbk_text.RETURN)
+
+        menu_player = tbk_menu.Menu("player",tbk_menu.TYPE_LIST,list_choices)
+        
+        for item in self.player.get_list_equipment():
+            if menu_player.answer[menu_player.name] == item.name:
+                self.player.unequip_item(item)
+                self.print_menu_unequip_item()
+        if menu_player.answer[menu_player.name] == tbk_text.RETURN:
+            self.print_menu_equipment()
+
+    def print_menu_inventory(self):
+        tbk_ui.clear()
+        tbk_ui.print_title(tbk_text.INVENTORY)
+        self.player.print_inventory()
+        print()
+        list_choices = []
+        if len(self.player.get_list_consumable()) > 0:
+            list_choices.append(tbk_text.USE_ITEM)
+        
+        if len(self.player.get_list_equipable()) > 0:
+            list_choices.append(tbk_text.EQUIP_ITEM)
+
+        list_choices.append(tbk_text.COMPARE_ITEM)
+        list_choices.append(tbk_text.RETURN)
+
+        menu_player = tbk_menu.Menu("player",tbk_menu.TYPE_LIST,list_choices)
+        match menu_player.answer[menu_player.name]:
+            case tbk_text.USE_ITEM:
+                self.print_menu_use_item()
+            case tbk_text.EQUIP_ITEM:
+                self.print_menu_equip_item()
+            case tbk_text.COMPARE_ITEM:
+                self.print_menu_compare_item()
+            case tbk_text.RETURN:
+                self.print_menu_player()
+
+    def print_menu_use_item(self):
+        tbk_ui.clear()
+        self.player.print_consumable()
+        print()
+
+        list_choices = []
+        for item in self.player.get_list_consumable():
+            list_choices.append(item.name) 
+        list_choices.append(tbk_text.RETURN)
+
+        menu_player = tbk_menu.Menu("player",tbk_menu.TYPE_LIST,list_choices)
+        
+        for item in self.player.get_list_consumable():
+            if menu_player.answer[menu_player.name] == item.name:
+                self.player.use_item(item)
+                self.print_menu_use_item()
+        if menu_player.answer[menu_player.name] == tbk_text.RETURN:
+            self.print_menu_inventory()
+
+    def print_menu_equip_item(self):
+        tbk_ui.clear()
+        self.player.print_equipable()
+        print()
+
+        list_choices = []
+        for item in self.player.get_list_equipable():
+            list_choices.append(item.name)
+        list_choices.append(tbk_text.RETURN)
+
+        menu_player = tbk_menu.Menu("player",tbk_menu.TYPE_LIST,list_choices)
+
+        for item in self.player.get_list_equipable():
+            if menu_player.answer[menu_player.name] == item.name:
+                self.player.equip_item(item)
+                self.print_menu_equip_item()
+        if menu_player.answer[menu_player.name] == tbk_text.RETURN:
+            self.print_menu_inventory()  
+
+    def print_menu_compare_item(self):
+        self.print_menu_inventory()
+
+    def print_menu_skills(self):
+        pass
+
+    def print_menu_bestiary(self):
+        pass
+
+    def print_menu_fishing_diary(self):
+        pass
+    
+    def print_menu_blacksmithing(self):
+        pass
+    # endregion
