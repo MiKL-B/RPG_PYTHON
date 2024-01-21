@@ -6,8 +6,7 @@ translation
 shop
 
 # progress
-create items
-compare items
+refactor item
 player(job,quests,inventory...)
 
 # finished

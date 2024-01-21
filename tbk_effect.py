@@ -8,5 +8,10 @@ def cure(self,value):
     if self.state != value:
         self.state = value
 
+def take_damage(self,value):
+    self.health -= value
+    if self.health <= 0:
+        self.health = 0
+        
 def fireball():
     pass

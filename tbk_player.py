@@ -5,29 +5,54 @@ import tbk_ui
 import tbk_text 
 import tbk_item
 import tbk_effect
+import tbk_level
 
 class Player(metaclass=Singleton):
-    def __init__(self,name="",job = None,loc_x=0, loc_y=0,health=0,max_health=0,state=0,equipment=None,inventory=None,gold=0):
-        self.name = name
-        self.job = job
+    def __init__(self,name="",job = None,loc_x=0, loc_y=0,health=100,max_health=100,state=0,equipment=None,inventory=None,gold=0,level=1,experience=0):
+        # player
+        # if heroes is None:
+        #     heroes = []
+        # self.heroes = heroes
+        # self.world_map_x = world_map_x
+        # self.world_map_y = world_map_y
         self.loc_x = loc_x
         self.loc_y = loc_y
+        if inventory == None:
+            inventory = []
+        self.inventory = inventory
+        self.gold = gold
+        
+        # if quests is None:
+        #     quests = []
+        # self.quests = quests
+        
+        # heroes
+        self.name = name
+        self.job = job
         self.health = health
         self.max_health = max_health
         self.state = state
         if equipment == None:
             equipment =  []
         self.equipment = equipment
-        if inventory == None:
-            inventory = []
-        self.inventory = inventory
-        self.gold = gold
+        self.level = level
+        self.experience = experience
+        
 
 
     # region refresh
+    # def refresh(self):
+    #     """refresh info player + heroes of player"""
+    #     for hero in self.heroes:
+    #         print(f"Name: {hero.name} Class: {hero.job}")
+    #     print(f"Gold: {module_ui.color(self.get_gold(),'yellow')}")
+
     def print_info(self):
         tbk_ui.print_msg("Name",self.name,"green")
         tbk_ui.print_msg("Job",self.job.name,"green")
+        tbk_ui.print_msg("Level",self.level,"green")
+        self.print_experience()
+        tbk_ui.print_msg("Health",str(self.health) + " / " + str(self.max_health), "green")
 
     def print_gold(self):
         tbk_ui.print_msg("Gold",self.gold, "yellow")
@@ -40,6 +65,7 @@ class Player(metaclass=Singleton):
             print("Inventory empty!")
 
     def print_equipment(self):
+        # for heroes
         if len(self.equipment) > 0:
             for item in self.equipment:
                 tbk_ui.print_msg("Item",item.name,"green")
@@ -49,10 +75,16 @@ class Player(metaclass=Singleton):
     def print_position(self):
         tbk_ui.print_msg("X",self.loc_x,"green")
         tbk_ui.print_msg("Y",self.loc_y,"green")
+
+    def print_experience(self):
+        # for heroes
+        max_experience = tbk_level.levels[self.level-1]['max_experience']
+        tbk_ui.print_msg("Exp", str(self.experience) + " / " + str(max_experience),"green")
     # endregion
 
     # region setters
     def set_name(self, question_name, answer_name):
+        # for heroes
         max_length_name = 10
         while True:
             length_name = len(answer_name["name"])
@@ -67,6 +99,7 @@ class Player(metaclass=Singleton):
         self.name = answer_name["name"]
     
     def set_job(self,value):
+        # for heroes
         self.job = value
     # endregion
         
@@ -195,12 +228,14 @@ class Player(metaclass=Singleton):
             self.inventory.remove(item)
 
     def pickup_item(self,item):
+        max_length_inventory = 10
+        max_qty_item = 99
         # can't pickup an item if the inventory is full
-        if len(self.inventory) == 10:
+        if len(self.inventory) == max_length_inventory:
             print("Your inventory is full!")
             return
         
-        if item.quantity == 99:
+        if item.quantity == max_qty_item:
             print(f"You have the maximum quantity for {item.name}!")
             return
         
@@ -219,9 +254,15 @@ class Player(metaclass=Singleton):
         item.quantity += 1
     
     def buy_item(self,item):
+        max_length_inventory = 10
+        max_qty_item = 99
         # can't pickup an item if the inventory is full
-        if len(self.inventory) == 10:
+        if len(self.inventory) == max_length_inventory:
             print("Your inventory is full!")
+            return
+        
+        if item.quantity == max_qty_item:
+            print(f"You have the maximum quantity for {item.name}!")
             return
         
         if self.gold < item.purchase_price:
@@ -304,10 +345,33 @@ class Player(metaclass=Singleton):
         if self.gold <= min_gold:
             self.gold = min_gold
     # endregion
+            
+    # region experience
+    def increase_experience(self,value):
+        # for heroes
+        self.experience += value
+        
+        last_index = len(tbk_level.levels)-1
+        if self.level == tbk_level.levels[last_index]["level"]:
+            print("you have reached the maximum level")
+            self.experience = tbk_level.levels[last_index]["max_experience"]
+            return
+        
+        # increase level when you reach the the max_exp for the current level 
+        if self.experience >= tbk_level.levels[self.level-1]["max_experience"]:
+            self.increase_level()
+             
+    def increase_level(self):
+        # for heroes
+        self.level += 1
+        self.experience = 0
+        self.max_health += percentage(self.max_health,25)
+    # endregion
 
 
-# p = Player()
-# p.gold = 999_998
-# p.decrease_gold(999_999)
+# move to a calcul file
+def percentage(field,value):
+    return int(field * (value / 100))
 
-# p.print_gold()
+
+p = Player()
