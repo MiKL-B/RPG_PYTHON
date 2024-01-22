@@ -178,7 +178,14 @@ class Game:
     def print_menu_town(self): # TODO
         # tavern
         #   - bounty boards
-        #   - job master
+        # job master
+        #
+        pass
+    
+    def print_menu_tavern(self): # TODO
+        pass
+
+    def print_menu_job_master(self): # TODO
         pass
 
     def print_menu_combat(self): # TODO
