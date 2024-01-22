@@ -1,4 +1,4 @@
-class Monster: # character inheritance
+class Monster: # character inheritance # TODO
     def __init__(self,index,name,description,nb_defeated):
         self.index = index
         self.name = name

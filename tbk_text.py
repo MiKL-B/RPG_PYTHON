@@ -36,6 +36,7 @@ FISHING_DIARY = "Fishing diary"
 BLACKSMITHING = "Blacksmithing"
 
 TOWN = "Town"
+COMBAT = "Combat"
 NORTH = "North"
 WEST = "West"
 EAST = "East"

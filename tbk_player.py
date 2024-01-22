@@ -5,6 +5,7 @@ import tbk_ui
 import tbk_text 
 import tbk_item
 import tbk_level
+import tbk_location
 
 class Player(metaclass=Singleton):
     def __init__(self,name="",job=None,loc_x=0, loc_y=0,health=100,max_health=100,
@@ -30,20 +31,12 @@ class Player(metaclass=Singleton):
         self.gold = gold
         self.attack = attack
         self.defense = defense
-        # if heroes is None:
-        #     heroes = []
-        # self.heroes = heroes
         # if quests is None:
         #     quests = []
         # self.quests = quests
         
 
-    # def refresh(self):
-    #     """refresh info player + heroes of player"""
-    #     for hero in self.heroes:
-    #         print(f"Name: {hero.name} Class: {hero.job}")
-    #     print(f"Gold: {module_ui.color(self.get_gold(),'yellow')}")
-        
+
     # region refresh
     def print_info(self):
         tbk_ui.clear()
@@ -92,23 +85,14 @@ class Player(metaclass=Singleton):
         tbk_ui.print_msg("world Y",str(self.world_map_y),"green")
         tbk_ui.print_msg("local X",str(self.loc_x),"green")
         tbk_ui.print_msg("local Y",str(self.loc_y),"green")
-    
-    # def refresh_position(self):
-    #     """refresh position"""
-    #     location_name = module_text.UNKNOWN
-    #     for item in locations:
-    #         if item.x == self.location_x and item.y == self.location_y:
-    #             location_name = item.name
-    #     print(f"Local:{location_name}")
-    #     print(f"X:{self.location_x} Y:{self.location_y}")
 
-    # def is_in_town(self) -> bool:
-    #     """return if the player is in town for access to shop..."""
-    #     in_town = False
-    #     for item in locations:
-    #         if item.x == self.location_x and item.y == self.location_y and item.shop:
-    #             in_town = True
-    #     return in_town
+    def is_in_town(self) -> bool:
+        """return if the player is in town for access to shop..."""
+        in_town = False
+        for location in tbk_location.locations:
+            if location.x == self.loc_x and location.y == self.loc_y and location.shop:
+                in_town = True
+        return in_town
     # endregion
     
     # region getters
@@ -122,7 +106,7 @@ class Player(metaclass=Singleton):
     def get_list_equipable(self):
         list_items = []
         for item in self.inventory:
-            if isinstance(item,(tbk_item.Armor,tbk_item.Weapon)):
+            if isinstance(item,(tbk_item.Armor,tbk_item.Weapon,tbk_item.Jewel)):
                 list_items.append(item)
         return list_items
     
@@ -158,7 +142,7 @@ class Player(metaclass=Singleton):
             answer_name = inquirer.prompt(question_name)
 
         if answer_name["name"] == "":
-            answer_name["name"] = "Hero"
+            answer_name["name"] = "Gnar Brelok"
 
         self.name = answer_name["name"]
 
@@ -259,15 +243,16 @@ class Player(metaclass=Singleton):
         tbk_ui.wait()
     
     def equip_item(self,item):
+        max_length_equipment = 3
         # check if already have a weapon or armor or jewel 
         for it in self.equipment:
             if type(it) == type(item):
-                print(f"you already have equipped a {it.name}")
+                print(f"You already have equipped a {it.name}")
                 tbk_ui.wait()
                 return
         
         # can't equip more than three items
-        if len(self.equipment) == 3:
+        if len(self.equipment) == max_length_equipment:
             print("equipment full!")
             tbk_ui.wait()
             return
@@ -306,8 +291,8 @@ class Player(metaclass=Singleton):
         
         # process to unequip
         self.equipment.remove(item)
-        self.inventory.append(item)
-        item.quantity = 1
+        self.pickup_item(item)
+
         print(f"{item.name} well unequipped!")
         tbk_ui.wait()
         
@@ -343,11 +328,6 @@ class Player(metaclass=Singleton):
             print(f"You have the maximum quantity for {item.name}!")
             return
         
-        # check single item for equipment
-        if item in self.inventory and isinstance(item,(tbk_item.Weapon,tbk_item.Armor,tbk_item.Jewel)):
-            print(f"You already have {item.name} in your inventory!")
-            return
-        
         # process to pick up the item
         if item not in self.inventory:
             self.inventory.append(item)
@@ -372,12 +352,7 @@ class Player(metaclass=Singleton):
         if self.gold < item.purchase_price:
             print("You don't have enough money bro!")
             return
-        
-        # check single item for equipment
-        if item in self.inventory and isinstance(item,(tbk_item.Weapon,tbk_item.Armor,tbk_item.Jewel)):
-            print(f"You already have {item.name} in your inventory!")
-            return
-        
+
         # process to pick up the item
         if item not in self.inventory:
             self.inventory.append(item)
@@ -413,26 +388,26 @@ class Player(metaclass=Singleton):
         self.gold += item.sale_price
         print(f"You have sold {item.name} for {item.sale_price} gold!")
     
-    def compare_item(self,item1, item2):
-        headers = ["Fields", item1.name, item2.name]
-        table = []
+    # def compare_item(self,item1, item2):
+    #     headers = ["Fields", item1.name, item2.name]
+    #     table = []
 
-        if isinstance(item1, tbk_item.Weapon) and isinstance(item2, tbk_item.Weapon):
-            table.append(["Attack", item1.attack, self.compare(item1.attack,item2.attack)])
-            print(tabulate(table, headers, tablefmt="pretty"))
-        elif isinstance(item1, (tbk_item.Armor, tbk_item.Jewel)) and isinstance(item2, (tbk_item.Armor, tbk_item.Jewel)):
-            table.append(["Defense", item1.defense,self.compare(item1.defense, item2.defense)])
-            print(tabulate(table, headers, tablefmt="pretty"))
-        else:
-            print("No comparison!")
+    #     if isinstance(item1, tbk_item.Weapon) and isinstance(item2, tbk_item.Weapon):
+    #         table.append(["Attack", item1.attack, self.compare(item1.attack,item2.attack)])
+    #         print(tabulate(table, headers, tablefmt="pretty"))
+    #     elif isinstance(item1, (tbk_item.Armor, tbk_item.Jewel)) and isinstance(item2, (tbk_item.Armor, tbk_item.Jewel)):
+    #         table.append(["Defense", item1.defense,self.compare(item1.defense, item2.defense)])
+    #         print(tabulate(table, headers, tablefmt="pretty"))
+    #     else:
+    #         print("No comparison!")
 
-    def compare(self,value1, value2):
-        text = value2
-        if value1 < value2:
-            text = tbk_ui.GREEN + str(text) + tbk_ui.END
-        elif value1 > value2:
-            text = tbk_ui.RED + str(text) + tbk_ui.END
-        return text
+    # def compare(self,value1, value2):
+    #     text = value2
+    #     if value1 < value2:
+    #         text = tbk_ui.GREEN + str(text) + tbk_ui.END
+    #     elif value1 > value2:
+    #         text = tbk_ui.RED + str(text) + tbk_ui.END
+    #     return text
     # endregion
 
     # region gold

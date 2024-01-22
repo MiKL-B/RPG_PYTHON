@@ -1,4 +1,4 @@
-class Pnj: # character inheritance
+class Pnj: # character inheritance # TODO
     def __init__(self,index,name,world_map_x,world_map_y,location_x,location_y):
         self.index = index
         self.name = name

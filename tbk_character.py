@@ -1,9 +1,4 @@
-"""character"""
-
-
-class Character:
-    """class character"""
-
+class Character: # TODO
     def __init__(self, index: int, name: str,
                  level: int, health: int,
                  max_health: int, attack: int,
