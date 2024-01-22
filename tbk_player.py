@@ -4,14 +4,12 @@ from tbk_singleton import Singleton
 import tbk_ui
 import tbk_text 
 import tbk_item
-import tbk_effect
 import tbk_level
 
 class Player(metaclass=Singleton):
     def __init__(self,name="",job=None,loc_x=0, loc_y=0,health=100,max_health=100,
                  state=0,equipment=None,inventory=None,gold=0,level=1,experience=0,
-                 world_map_x=0,world_map_y=0):
-        # player
+                 world_map_x=0,world_map_y=0,attack=5,defense=5):
         self.name = name
         self.job = job
         self.health = health
@@ -22,9 +20,6 @@ class Player(metaclass=Singleton):
         self.equipment = equipment
         self.level = level
         self.experience = experience
-        # if heroes is None:
-        #     heroes = []
-        # self.heroes = heroes
         self.world_map_x = world_map_x
         self.world_map_y = world_map_y
         self.loc_x = loc_x
@@ -33,7 +28,11 @@ class Player(metaclass=Singleton):
             inventory = []
         self.inventory = inventory
         self.gold = gold
-        
+        self.attack = attack
+        self.defense = defense
+        # if heroes is None:
+        #     heroes = []
+        # self.heroes = heroes
         # if quests is None:
         #     quests = []
         # self.quests = quests
@@ -47,23 +46,26 @@ class Player(metaclass=Singleton):
         
     # region refresh
     def print_info(self):
+        tbk_ui.clear()
         tbk_ui.print_msg("Name",self.name,"green")
         tbk_ui.print_msg("Job",self.job.name,"green")
         tbk_ui.print_msg("Level",str(self.level),"green")
         self.print_experience()
-        tbk_ui.print_msg("Health",str(self.health) + " / " + str(self.max_health), "green")
-    # endregion
+        tbk_ui.print_resource_bar("Health",self.health,self.max_health,True)
+        tbk_ui.print_msg("Attack",self.get_attack(),"green")
+        tbk_ui.print_msg("Defense",self.get_defense(),"green")
         
     def print_equipment(self):
         if len(self.equipment) > 0:
             for item in self.equipment:
                 tbk_ui.print_msg("Item",item.name,"green")
+                print(item.__dict__)
         else:
             print("Equipment empty!")
     
     def print_experience(self):
         max_experience = tbk_level.levels[self.level-1]['max_experience']
-        tbk_ui.print_msg("Exp", str(self.experience) + " / " + str(max_experience),"green")
+        tbk_ui.print_resource_bar("Exp",self.experience,max_experience)
     
     def print_gold(self):
         tbk_ui.print_msg("Gold",str(self.gold), "yellow")
@@ -130,6 +132,19 @@ class Player(metaclass=Singleton):
             list_items.append(item)
         return list_items
     
+    def get_attack(self):
+        attack = self.attack
+        for item in self.equipment:
+            if isinstance(item,tbk_item.Weapon):
+                attack += item.attack
+        return attack
+
+    def get_defense(self):
+        defense = self.defense
+        for item in self.equipment:
+            if isinstance(item,(tbk_item.Armor,tbk_item.Jewel)):
+                defense += item.defense
+        return defense
     # endregion
         
     # region setters
@@ -147,8 +162,18 @@ class Player(metaclass=Singleton):
 
         self.name = answer_name["name"]
 
-    def set_job(self,value):
-        self.job = value
+    def set_job(self,new_job):
+        self.job = new_job
+        self.attack = new_job.attack
+        self.defense = new_job.defense
+
+        match new_job.name:
+            case tbk_text.WARRIOR:
+                self.equipment.append(tbk_item.sword)
+            case tbk_text.WIZARD:
+                self.equipment.append(tbk_item.staff)
+            case tbk_text.ROGUE:
+                self.equipment.append(tbk_item.bow)
     # endregion
            
     # region move
@@ -228,22 +253,16 @@ class Player(metaclass=Singleton):
             tbk_ui.wait()
             return
         
-        # process to use an item according to his category
-        match item.category:
-            case "heal":
-                tbk_effect.heal(self,item.value)
-                print(f"Heal done: {item.value}")
-            case "cure":
-                tbk_effect.cure(self,item.value)
-                print(f"Cure done!")
-
-        self.remove_item(item)
+        # if effect is done remove item
+        if item.effect(self,item.value):
+            self.remove_item(item)
+        tbk_ui.wait()
     
     def equip_item(self,item):
         # check if already have a weapon or armor or jewel 
         for it in self.equipment:
             if type(it) == type(item):
-                print(f"you already have equipped a {type(it)}")
+                print(f"you already have equipped a {it.name}")
                 tbk_ui.wait()
                 return
         
@@ -308,7 +327,6 @@ class Player(metaclass=Singleton):
         # process to remove
         item.quantity -= 1
         print(f"{item.name} removed from inventory!")
-        tbk_ui.wait()
         
         if item.quantity == 0:
             self.inventory.remove(item)

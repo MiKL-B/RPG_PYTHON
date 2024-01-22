@@ -82,7 +82,6 @@ class Game:
         self.player.set_job(job)
         self.player.pickup_item(tbk_item.potion)
         self.player.pickup_item(tbk_item.potion)
-        self.player.pickup_item(tbk_item.sword)
 
     def print_introduction(self):
         tbk_ui.clear()
@@ -135,7 +134,6 @@ class Game:
 
     def print_menu_player(self):
         tbk_ui.clear()
-        tbk_ui.print_title(tbk_text.CHARACTER)
         self.player.print_info()
         self.player.print_gold()
         print()

@@ -1,4 +1,5 @@
 import tbk_job
+import tbk_effect
 
 class Shop:
     def __init__(self, items=None, loc_x=0, loc_y=0):
@@ -18,9 +19,9 @@ class Item:
 
 
 class Consumable(Item):
-    def __init__(self, name, purchase_price, sale_price, quantity, category, value):
+    def __init__(self, name, purchase_price, sale_price, quantity, effect,value):
         Item.__init__(self, name, purchase_price, sale_price, quantity)
-        self.category = category
+        self.effect = effect
         self.value = value
 
 
@@ -51,12 +52,13 @@ class Jewel(Equipment):
         self.defense = defense
 
 
-potion = Consumable("Potion", 50, 25, 1, "heal", 25)
-beer = Consumable("Beer", 50, 25, 1, "heal", 100)
-antidote = Consumable("Antidote", 50, 25, 1, "cure", 0)
+potion = Consumable("Potion", 50, 25, 1,tbk_effect.heal,25)
+beer = Consumable("Beer", 50, 25, 1,tbk_effect.heal,10)
+# antidote = Consumable("Antidote", 50, 25, 1)
 
 sword = Weapon("Sword", 50, 25, 1, tbk_job.TYPE_FIGHT, 5)
 bow = Weapon("Bow", 50, 25, 1, tbk_job.TYPE_RANGE, 10)
+staff = Weapon("Staff", 50, 25, 1, tbk_job.TYPE_RANGE, 10)
 
 shield = Armor("Shield", 50, 25, 1, tbk_job.TYPE_FIGHT, 5)
 ring = Jewel("Ring", 50, 25, 1, tbk_job.TYPE_FIGHT, 5)
@@ -64,7 +66,8 @@ ring = Jewel("Ring", 50, 25, 1, tbk_job.TYPE_FIGHT, 5)
 list_shop = [
     potion,
     beer,
-    antidote,
+    staff,
+    # antidote,
     sword,
     bow,
     shield,
