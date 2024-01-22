@@ -165,6 +165,9 @@ class Game:
                 self.game()
 
     def print_menu_town(self):
+        # tavern
+        #   - bounty boards
+        #   - job master
         pass
     
     def print_menu_quests(self):
@@ -284,3 +287,103 @@ class Game:
     def print_menu_blacksmithing(self):
         pass
     # endregion
+
+
+#   # region town
+#     def display_menu_town(self):
+#         """display town"""
+#         module_ui.clear()
+#         print("town name")
+#         module_ui.separator()
+#         question = [
+#             inquirer.List(module_text.ADVENTURE,
+#                           message=module_text.CHOOSE_OPTION,
+#                           choices=[module_text.SHOP,
+#                                    module_text.TAVERN,
+#                                    module_text.RETURN]),
+#         ]
+#         answer = inquirer.prompt(question)
+#         match answer[module_text.ADVENTURE]:
+#             case module_text.SHOP:
+#                 self.display_shop()
+#             case module_text.TAVERN:
+#                 self.display_tavern()
+#             case module_text.RETURN:
+#                 self.launch_adventure()
+
+#     def display_shop(self):
+#         """display shop"""
+#         module_ui.clear()
+#         print("shop name")
+#         question = [
+#             inquirer.List(module_text.ADVENTURE,
+#                           message=module_text.CHOOSE_OPTION,
+#                           choices=[module_text.BUY,
+#                                    module_text.SELL,
+#                                    module_text.RETURN]),
+#         ]
+#         answer = inquirer.prompt(question)
+#         match answer[module_text.ADVENTURE]:
+#             case module_text.BUY:
+#                 self.display_buy_menu()
+#             case module_text.SELL:
+#                 self.display_sell_menu()
+#             case module_text.RETURN:
+#                 self.display_menu_town()
+
+#     def display_buy_menu(self):
+#         """buy menu"""
+#         module_ui.clear()
+#         # display list of item shop
+#         module_item.refresh_shop()
+#         self.player.refresh_gold()
+#         module_ui.separator()
+
+#         list_choices = []
+#         for item in module_item.shop:
+#             list_choices.append(item.name)
+#         list_choices.append(module_text.RETURN)
+
+#         question = [
+#             inquirer.List(module_text.ADVENTURE,
+#                           message=module_text.CHOOSE_ITEM_TO_BY,
+#                           choices=list_choices),
+#         ]
+#         answer = inquirer.prompt(question)
+
+#         for item in module_item.shop:
+#             if answer[module_text.ADVENTURE] == item.name:
+#                 self.player.buy_item(item)
+#                 module_ui.wait()
+#                 self.display_buy_menu()
+#         if answer[module_text.ADVENTURE] == module_text.RETURN:
+#             self.display_shop()
+
+#     def display_sell_menu(self):
+#         """sell menu"""
+#         module_ui.clear()
+#         # display list of inventory
+#         self.player.refresh_inventory()
+#         self.player.refresh_gold()
+#         module_ui.separator()
+
+#         list_choices = []
+#         if len(self.player.inventory) > 0:
+#             for item in self.player.get_inventory():
+#                 list_choices.append(item.name)
+#         list_choices.append(module_text.RETURN)
+
+#         question = [
+#             inquirer.List(module_text.ADVENTURE,
+#                           message=module_text.CHOOSE_ITEM_TO_SELL,
+#                           choices=list_choices),
+#         ]
+#         answer = inquirer.prompt(question)
+#         for item in self.player.inventory:
+#             if answer[module_text.ADVENTURE] == item.name:
+#                 self.player.sell_item(item)
+#                 module_ui.wait()
+#                 self.display_sell_menu()
+
+#         if answer[module_text.ADVENTURE] == module_text.RETURN:
+#             self.display_shop()
